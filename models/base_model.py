@@ -22,7 +22,8 @@ class BaseModel:
             for key, value in kwargs.items():
                 if key != "__class__":
                     setattr(self, key, value)
-            self.created_at = datetime.strptime(self.created_at, '%Y-%m-%dT%H:%M:%S.%f')
+            self.created_at = datetime.strptime(self.created_at,
+                                                '%Y-%m-%dT%H:%M:%S.%f')
         else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
@@ -30,7 +31,8 @@ class BaseModel:
 
     def __str__(self):
         """Prints object details"""
-        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        return "[{}] ({}) {}".format(self.__class__.__name__,
+                                     self.id, self.__dict__)
 
     def save(self):
         """updates updated_at with the current datetime
@@ -43,14 +45,6 @@ class BaseModel:
         """Returns dictionary representation of all the attributes
         in key: value format
         """
-        """ice = ["id", "created_at", "__class__", "my_number", "updated_at", "name"]
-        cream = [self.id, self.created_at.isoformat(), self.__class__.__name__, self.my_number, self.updated_at.isoformat(), self.name]
-        try:
-            icecream = dict(zip(ice, cream))
-        except IndexError:
-            pass
-        return icecream
-        """
         ice = self.__dict__.copy()
         ice["__class__"] = self.__class__.__name__
         for k, v in self.__dict__.items():
@@ -58,4 +52,3 @@ class BaseModel:
                 v = self.__dict__[k].isoformat()
                 ice[k] = v
         return ice
-        
