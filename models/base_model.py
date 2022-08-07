@@ -3,12 +3,13 @@
 """
 from datetime import datetime
 import uuid
+from models import storage
 
 
 class BaseModel:
     """Class that holds all the common attributes/methods for classes
     """
-    def __init__(self, name=None, my_number=0):
+    def __init__(self, *args, **kwargs):
         """Initializes the instance attributes
         Args:
         name(str): model name
@@ -17,36 +18,16 @@ class BaseModel:
         created_at (datetime): time of model creation
         updated_at (datetime): time of model update
         """
-        self.name = name
-        self.my_number = my_number
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
-
-    """@property
-    def name(self):
-        Get and set the name and handle errors
-        return self.name
-
-    @name.setter
-    def name(self, val):
-        if type(val) != str:
-            self.name = str(val)
+        if len(kwargs) != 0:
+            for key, value in kwargs.items():
+                if key != "__class__":
+                    setattr(self, key, value)
+            self.created_at = datetime.strptime(self.created_at, '%Y-%m-%dT%H:%M:%S.%f')
         else:
-            self.name = val
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            storage.new(self)
 
-    @property
-    def my_number(self):
-        Get and set the right type for my_number
-        
-        return self.my_number
-
-    @my_number.setter
-    def my_number(self, val):
-        if type(val) != int:
-            raise TypeError("please input an integer")
-        self.my_number = val
-    """
     def __str__(self):
         """Prints object details"""
         return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
@@ -55,15 +36,23 @@ class BaseModel:
         """updates updated_at with the current datetime
         """
         self.updated_at = datetime.now()
+        storage.save()
 
     def to_dict(self):
         """Returns dictionary representation of all the attributes
         in key: value format
         """
-        ice = ["my_number", "name", "__class__", "updated_at", "id", "created_at"]
-        cream = [self.my_number, self.name, self.__class__.__name__, self.updated_at.isoformat(), self.id, self.created_at.isoformat()]
+        """ice = ["id", "created_at", "__class__", "my_number", "updated_at", "name"]
+        cream = [self.id, self.created_at.isoformat(), self.__class__.__name__, self.my_number, self.updated_at.isoformat(), self.name]
         try:
             icecream = dict(zip(ice, cream))
         except IndexError:
             pass
-        return icecream
+        return icecream"""
+        ice = self.__dict__.copy()
+        ice["__class__"] = self.__class__.__name__
+        for k, v in self.__dict__.items():
+            if k in ("created_at", "updated_at"):
+                v = self.__dict__[k].isoformat()
+                ice[k] = v
+        return ice
