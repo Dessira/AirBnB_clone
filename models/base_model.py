@@ -3,7 +3,6 @@
 """
 from datetime import datetime
 import uuid
-from models import storage
 
 
 class BaseModel:
@@ -18,6 +17,7 @@ class BaseModel:
         created_at (datetime): time of model creation
         updated_at (datetime): time of model update
         """
+        from models import storage
         if len(kwargs) != 0:
             for key, value in kwargs.items():
                 if key != "__class__":
@@ -35,6 +35,7 @@ class BaseModel:
     def save(self):
         """updates updated_at with the current datetime
         """
+        from models import storage
         self.updated_at = datetime.now()
         storage.save()
 
@@ -48,7 +49,8 @@ class BaseModel:
             icecream = dict(zip(ice, cream))
         except IndexError:
             pass
-        return icecream"""
+        return icecream
+        """
         ice = self.__dict__.copy()
         ice["__class__"] = self.__class__.__name__
         for k, v in self.__dict__.items():
@@ -56,3 +58,4 @@ class BaseModel:
                 v = self.__dict__[k].isoformat()
                 ice[k] = v
         return ice
+        

@@ -35,14 +35,12 @@ class FileStorage:
     def new(self, obj):
         """Sets the object and id as the key
         """
-        self.i += 1
         coffee = "{}.{}".format(obj.__class__.__name__, obj.id)
         self.__objects[coffee] = obj
 
     def save(self):
         """Serializes __objects into a file
         """
-        print(self.__objects)
         with open(self.__file_path, mode='w') as chips:
             #json.dump({i: v.to_dict() for i, v in self.__objects.items()}, chips)
             holder = self.__objects
