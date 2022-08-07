@@ -41,5 +41,6 @@ class TestBaseModel(unittest.TestCase):
         gwen = mod.to_dict()
         self.assertEqual(gwen, self.__dict__)
 
+
 if __name__ == '__main__':
     unittest.main()
